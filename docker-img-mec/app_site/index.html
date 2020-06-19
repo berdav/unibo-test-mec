@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="bootstrap.min.css">
+
+		<title>UniBO Test MEC Application</title>
+		<style>
+			html {
+				background-color:#212529;
+				color: white;
+			}
+
+			h1,h2,h5 {
+				color:white;
+			}
+
+			#main {
+				min-height: 100%;
+				height: 100%;
+				background-color:#212529;
+			}
+
+			#result {
+				color: white;
+				margin-left: 10%;
+				margin-right: 10%;
+				min-width: 80%;
+				min-height: 200px;
+				border-radius:5px;
+				border: solid white 2px;
+				text-align: left;
+				padding: 1%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main" class='text-center'>
+			<h1>UniBO Test MEC Application</h1>
+			<div id="services" class="float-none">
+				<br/>
+				<h5>Services</h5>
+				<br/>
+			<button type="button" class="btn btn-primary btn-lg"
+				onclick="services()">Services</button>
+			<button type="button" class="btn btn-success btn-lg"
+				onclick="service_subscribe()">Subscribe</button>
+			<button type="button" class="btn btn-danger btn-lg"
+				onclick="service_unsubscribe()">Unsubscribe</button>
+			</div>
+			<div id="dnsRules" class="float-none">
+				<br/>
+				<h5>Dns Rules</h5>
+				<br/>
+			<button type="button" class="btn btn-secondary btn-lg"
+				onclick="transports()">Transports</button>
+			<button type="button" class="btn btn-primary btn-lg"
+				onclick="dns_rules()">DNS Rules</button>
+			<button type="button" class="btn btn-success btn-lg"
+				onclick="dns_rule_activate()">Activate</button>
+			<button type="button" class="btn btn-danger btn-lg"
+				onclick="dns_rule_deactivate()">Deactivate</button>
+			</div>
+
+		<br/>
+		<br/>
+		<h2>Result</h2>
+		<br/>
+		<div id='result'></div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="jquery.min.js"></script>
+		<script src="index.js"></script>
+		<script src="popper.min.js"></script>
+		<script src="bootstrap.min.js"></script>
+	</body>
+</html>

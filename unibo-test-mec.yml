@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unibo-test-mec
+  labels:
+    app: UniboTestMEC
+spec:
+  containers:
+    - name: unibo-test-mec-1
+      image: unibo-test-mec-application
+      ports:
+        - containerPort: 80
+      env:
+        - name: MEC_BASE
+          value: "http://172.17.0.2"
+        - name: APP_INSTANCE_ID
+          value: "997fc80a-cfc1-498a-b77f-608f09506e86"
+      imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unibo-test-mec
+spec:
+  type: NodePort
+  selector:
+    app: UniboTestMEC
+  ports:
+    - port: 80
+      targetPort: 80
