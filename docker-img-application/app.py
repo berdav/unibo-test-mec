@@ -7,6 +7,8 @@ from flask import Flask, Response
 
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
+MEC_SERVICE_MGMT="mec_service_mgmt/v1"
+MEC_APP_SUPPORT="mec_app_support/v1"
 
 app = Flask(__name__)
 
@@ -20,7 +22,10 @@ transports = [ { 'id': 'TransId12345' } ]
 def get_transports():
     global mec_base
     global transports
-    query_base = "{}/transports".format( mec_base )
+    query_base = "{}/{}/transports".format(
+            mec_base,
+            MEC_SERVICE_MGMT
+    )
     r = requests.get(query_base)
 
     return r.text
@@ -31,8 +36,11 @@ def service_availability():
     global mec_base
     global app_instance_id
     out = ''
-    query_base = "{}/applications/{}/services".format(
-            mec_base, app_instance_id)
+    query_base = "{}/{}/applications/{}/services".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id
+    )
 
     r = requests.get(query_base)
 
@@ -81,8 +89,11 @@ def subscribe():
       "isLocal": True
     }
 
-    query_base = "{}/applications/{}/services".format(mec_base,
-            app_instance_id)
+    query_base = "{}/{}/applications/{}/services".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id
+    )
 
     headers = {"content-type": "application/json"}
     r = requests.post(query_base, data=json.dumps(data), headers=headers)
@@ -98,8 +109,12 @@ def unsubscribe():
     global mec_base
     global service_id
     global app_instance_id
-    query_base = "{}/applications/{}/services/{}".format(mec_base,
-            app_instance_id, service_id)
+    query_base = "{}/{}/applications/{}/services/{}".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id,
+            service_id
+    )
     r = requests.delete(query_base)
     return r.text
 
@@ -110,8 +125,11 @@ def get_dns_rule():
     global dns_rules
     global app_instance_id
 
-    query_base = "{}/applications/{}/dns_rules".format(mec_base,
-            app_instance_id)
+    query_base = "{}/{}/applications/{}/dns_rules".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id
+    )
     r = requests.get(query_base)
 
     dns_rules = json.loads(r.text)
@@ -125,8 +143,11 @@ def modify_dns(modification):
     global app_instance_id
     dns_rule = dns_rules[0]
 
-    query_base = "{}/applications/{}/dns_rules/{}".format(
-            mec_base, app_instance_id, dns_rule['dnsRuleId']
+    query_base = "{}/{}/applications/{}/dns_rules/{}".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id,
+            dns_rule['dnsRuleId']
     )
 
     dns_rule["state"] = modification
