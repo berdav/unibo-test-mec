@@ -90,7 +90,7 @@ def init_appids(app_instance_id):
     appids[app_instance_id]['servicedict'] = {}
 
 # 8.2.2
-@app.route('/transports')
+@app.route('/mec_service_mgmt/v1/transports')
 def get_transports():
     global appids
     return Response(json.dumps(appids[app_instance_id]['transports']), mimetype='application/json')
@@ -98,8 +98,8 @@ def get_transports():
 # Services List
 # Services Subscribe
 # Services Unsubscribe
-@app.route('/applications/<appId>/services', methods=[ "GET", "POST" ])
-@app.route('/applications/<appId>/services/<serviceId>',
+@app.route('/mec_service_mgmt/v1/applications/<appId>/services', methods=[ "GET", "POST" ])
+@app.route('/mec_service_mgmt/v1/applications/<appId>/services/<serviceId>',
         methods=["GET", "DELETE"])
 def application_services(appId, serviceId = None):
     global appids
@@ -127,8 +127,8 @@ def application_services(appId, serviceId = None):
 
 # DNSRules list
 # DNSRules change
-@app.route('/applications/<appId>/dns_rules')
-@app.route('/applications/<appId>/dns_rules/<dnsruleId>',
+@app.route('/mec_app_support/v1/applications/<appId>/dns_rules')
+@app.route('/mec_app_support/v1/applications/<appId>/dns_rules/<dnsruleId>',
         defaults={'dnsruleId':None},
         methods = [ 'GET', 'PUT' ])
 def dns_rules(appId,dnsruleId = None):
