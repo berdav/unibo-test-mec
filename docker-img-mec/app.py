@@ -40,7 +40,7 @@ def init_appids(app_instance_id):
             'dnsRule1' : {
                 "dnsRuleId": "dnsRule1",
                 "domainName": "www.example.com",
-                "ipAddressType": "IP_V6",
+                "ipAddressType": "IP_V4",
                 "ipAddress": "192.0.2.0",
                 "state": "ACTIVE"
             }
