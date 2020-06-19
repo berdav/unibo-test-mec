@@ -1,10 +1,9 @@
-FROM debian
+FROM alpine
 
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y python3
-RUN apt-get install -y python3-flask
-RUN apt-get install -y python3-requests
+RUN apk update
+RUN apk add python3
+RUN apk add py3-flask
+RUN apk add py3-requests
 
 COPY app.py /usr/local/bin/app.py
 COPY app_site /var/www/
