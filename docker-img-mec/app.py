@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import os
+import uuid
 import json
 import requests
 from flask import Flask, Response, request
+
+notification_callback = ''
 
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
@@ -83,11 +86,29 @@ def init_appids(app_instance_id):
                 }
             ]
 
+    subscriptionlist = [
+            {
+              "_links": {
+                "self": {
+                  "href": "/mecSerMgmtApi/example"
+                },
+                "subscriptions": [
+                  {
+                    "href": "/mecSerMgmtApi/example",
+                    "rel": "string"
+                  }
+                ]
+              }
+            }
+            ]
+
     appids[app_instance_id] = {}
     appids[app_instance_id]['transports'] = transports
     appids[app_instance_id]['dns_rules'] = dns_rules
     appids[app_instance_id]['servicelist'] = servicelist
+    appids[app_instance_id]['subscriptionlist'] = subscriptionlist
     appids[app_instance_id]['servicedict'] = {}
+    appids[app_instance_id]['subscriptiondict'] = {}
 
 # 8.2.2
 @app.route('/mec_service_mgmt/v1/transports')
@@ -117,11 +138,14 @@ def application_services(appId, serviceId = None):
         headers={'location': '/applications/{}/services/{}'.format(
             appId, data['serName']
         ) }
+
+        # Call notification upon the creation of a new service
+        if notification_callback != '':
+            requests.get(notification_callback)
         
         return Response("ok", headers=headers)
 
     elif request.method == 'DELETE':
-        print(serviceId)
         del appids[appId]['servicedict'][serviceId]
         return "ok"
 
@@ -140,6 +164,43 @@ def dns_rules(appId,dnsruleId = None):
 
     elif request.method == 'PUT':
         appids[appId]['dns_rules'][dnsruleId] = json.loads(request.data)
+        return "ok"
+
+# Notifications List
+# Notifications Subscribe
+# Notifications Unsubscribe
+@app.route('/mec_service_mgmt/v1/applications/<appId>/subscriptions', methods=[ "GET", "POST" ])
+@app.route('/mec_service_mgmt/v1/applications/<appId>/subscriptions/<subscriptionId>',
+        methods=["GET", "DELETE"])
+def application_subscriptions(appId, subscriptionId = None):
+    global appids
+    global notification_callback
+
+    if request.method == 'GET':
+        if subscriptionId != None:
+            return json.dumps(appids[appId]['subscriptiondict'][subscriptionId])
+        else:
+            return json.dumps(appids[appId]['subscriptionlist'])
+
+    elif request.method == 'POST':
+        data = request.json
+        notification_id = str(uuid.uuid1())
+        appids[appId]['subscriptiondict'][notification_id] = data.copy()
+
+        headers={'location': '/applications/{}/services/{}'.format(
+            appId, notification_id
+        ) }
+
+        notification_callback = "http://{}/{}".format(
+                request.remote_addr,
+                data['_links']['self']['href']
+        )
+        
+        return Response("ok", headers=headers)
+
+    elif request.method == 'DELETE':
+        if subscriptionId != None:
+            del appids[appId]['subscriptiondict'][subscriptionId]
         return "ok"
 
 if __name__=='__main__':
