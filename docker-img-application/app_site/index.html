@@ -36,6 +36,19 @@
 				text-align: left;
 				padding: 1%;
 			}
+
+			#service_ready_led {
+				background-color: red;
+				max-width: 10px;
+				max-height: 10px;
+				min-width: 10px;
+				min-height: 10px;
+				border-radius:50%;
+				padding-left: 10px;
+				margin-left: 15px;
+				padding-right: 15px;
+				/*float: left;*/
+			}
 		</style>
 	</head>
 	<body>
@@ -48,9 +61,20 @@
 			<button type="button" class="btn btn-primary btn-lg"
 				onclick="services()">Services</button>
 			<button type="button" class="btn btn-success btn-lg"
-				onclick="service_subscribe()">Subscribe</button>
+				onclick="service_subscribe()">Register</button>
 			<button type="button" class="btn btn-danger btn-lg"
-				onclick="service_unsubscribe()">Unsubscribe</button>
+				onclick="service_unsubscribe()">Unregister</button>
+			</div>
+			<div id="subscriptions" class="float-none">
+				<br/>
+				<h5>Services Subscriptions</h5>
+				<br/>
+			<button type="button" class="btn btn-primary btn-lg"
+				onclick="notifications()">Subscriptions</button>
+			<button type="button" class="btn btn-success btn-lg"
+				onclick="notification_subscribe()">Subscribe</button>
+			<button type="button" class="btn btn-danger btn-lg"
+				onclick="notification_unsubscribe()">Unsubscribe</button>
 			</div>
 			<div id="dnsRules" class="float-none">
 				<br/>
@@ -66,6 +90,12 @@
 				onclick="dns_rule_deactivate()">Deactivate</button>
 			</div>
 
+		<br/>
+		<br/>
+		<div>
+			<h5>Service Ready <span id='service_ready_led'></span>
+			</h5>
+		</div>
 		<br/>
 		<br/>
 		<h2>Result</h2>

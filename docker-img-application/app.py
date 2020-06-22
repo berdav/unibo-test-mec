@@ -7,21 +7,28 @@ from flask import Flask, Response
 
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
+# MEC Service endpoint
 MEC_SERVICE_MGMT="mec_service_mgmt/v1"
+# MEC Application endpoint
 MEC_APP_SUPPORT="mec_app_support/v1"
+# Callback proposed
+CALLBACK_URL='/_mecSerMgmtApi/callback'
 
 app = Flask(__name__)
 
+# MEC Base Endpoint
 mec_base = ''
+
 service_id = ''
 app_instance_id = ''
-transports = [ { 'id': 'TransId12345' } ]
+transportlist = [ { 'id': 'TransId12345' } ]
 
-# 8.2.2
+application_notified = False
+
+# Transport API
 @app.route('/transports')
-def get_transports():
+def transports():
     global mec_base
-    global transports
     query_base = "{}/{}/transports".format(
             mec_base,
             MEC_SERVICE_MGMT
@@ -30,9 +37,9 @@ def get_transports():
 
     return r.text
 
-# 8.2.1
+# Services API
 @app.route('/services')
-def service_availability():
+def services():
     global mec_base
     global app_instance_id
     out = ''
@@ -46,11 +53,12 @@ def service_availability():
 
     return r.text
 
+# Subscribe to service
 @app.route('/services/subscribe')
-def subscribe():
+def service_subscribe():
     global mec_base
     global service_id
-    global transports
+    global transportlist
     global app_instance_id
 
     data = {
@@ -65,7 +73,7 @@ def subscribe():
       "state": "ACTIVE",
       "transportId": "Rest1",
       "transportInfo": {
-        "id": '{}'.format(transports[0]['id']),
+        "id": '{}'.format(transportlist[0]['id']),
         "name": "REST",
         "description": "REST API",
         "type": "REST_HTTP",
@@ -103,9 +111,9 @@ def subscribe():
 
     return 'New service_id: {}'.format(service_id)
 
-# 8.2.4
+# Unsubscribe a service
 @app.route('/services/unsubscribe')
-def unsubscribe():
+def service_unsubscribe():
     global mec_base
     global service_id
     global app_instance_id
@@ -118,9 +126,9 @@ def unsubscribe():
     r = requests.delete(query_base)
     return r.text
 
-# 8.3.5
+# Get DNS Rules
 @app.route('/dns_rules')
-def get_dns_rule():
+def dns_rules():
     global mec_base
     global dns_rules
     global app_instance_id
@@ -136,8 +144,9 @@ def get_dns_rule():
 
     return r.text
 
+# Modify DNS rules
 @app.route('/dns_rules/<modification>')
-def modify_dns(modification):
+def dns_rule_modify(modification):
     global mec_base
     global dns_rules
     global app_instance_id
@@ -155,6 +164,69 @@ def modify_dns(modification):
     r = requests.put(query_base, data=json.dumps(dns_rule), headers=headers)
     return json.dumps(dns_rule)
 
+# Notifications API
+@app.route('/notifications')
+def notifications():
+    global mec_base
+    global app_instance_id
+    query_base = "{}/{}/applications/{}/subscriptions".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id
+    )
+
+    r = requests.get(query_base)
+
+    return r.text
+
+# Subscribe to notifications
+@app.route('/notifications/subscribe')
+def notifications_subscribe():
+    global mec_base
+    global service_id
+    global app_instance_id
+
+    # Catch all notification endpoint
+    data = {
+      "subscriptionType": "SerAvailabilityNotificationSubscription",
+      "callbackReference": "string",
+      "_links": {
+        "self": {
+          "href": CALLBACK_URL
+        }
+      }
+    }
+
+    query_base = "{}/{}/applications/{}/subscriptions".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id
+    )
+
+    headers = {"content-type": "application/json"}
+    r = requests.post(query_base, data=json.dumps(data), headers=headers)
+
+    # XXX we don't have any slash in the url?
+    service_id = r.headers['location'].split('/')[-1]
+
+    return 'New notification_id: {}'.format(service_id)
+
+# Unsubscribe notifications
+@app.route('/notifications/unsubscribe')
+def notification_unsubscribe():
+    global mec_base
+    global service_id
+    global app_instance_id
+    query_base = "{}/{}/applications/{}/subscriptions/{}".format(
+            mec_base,
+            MEC_SERVICE_MGMT,
+            app_instance_id,
+            service_id
+    )
+    r = requests.delete(query_base)
+    return r.text
+
+# Catch all, return the retrieved file
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
 def catch_all(path):
@@ -171,6 +243,20 @@ def catch_all(path):
         t = 'text/javascript'
 
     return Response(body, mimetype=t)
+
+@app.route("/_get_application_notice")
+def get_application_notice():
+    global application_notified
+    return str(application_notified);
+
+# Callback for the notification framework
+@app.route(CALLBACK_URL)
+def service_notification_callback():
+    global application_notified
+    application_notified = True
+
+    # XXX We should notify back using a structured json?
+    return "ok"
 
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']

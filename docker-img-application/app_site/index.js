@@ -35,3 +35,27 @@ var dns_rule_activate = function() {
 var dns_rule_deactivate = function() {
 	_get_query("dns_rules/INACTIVE");
 }
+
+var notifications = function() {
+	_get_query("notifications")
+}
+
+var notification_subscribe = function() {
+	_get_query("notifications/subscribe")
+}
+
+var notification_unsubscribe = function() {
+	_get_query("notifications/unsubscribe")
+}
+
+setInterval(function() {
+	$.get("_get_application_notice").done( function(data) {
+		console.log(data)
+		if (data === 'True') {
+			$( "#service_ready_led" ).css(
+				"background-color",
+				"green"
+			)
+		}
+	});
+}, 1000)
