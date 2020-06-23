@@ -49,60 +49,130 @@
 				padding-right: 15px;
 				/*float: left;*/
 			}
+			li {
+			 color:white;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="main" class='text-center'>
 			<h1>UniBO Test MEC Application</h1>
-			<div id="services" class="float-none">
-				<br/>
-				<h5>Services</h5>
-				<br/>
-			<button type="button" class="btn btn-primary btn-lg"
-				onclick="services()">Services</button>
-			<button type="button" class="btn btn-success btn-lg"
-				onclick="service_subscribe()">Register</button>
-			<button type="button" class="btn btn-danger btn-lg"
-				onclick="service_unsubscribe()">Unregister</button>
-			</div>
-			<div id="subscriptions" class="float-none">
-				<br/>
-				<h5>Services Subscriptions</h5>
-				<br/>
-			<button type="button" class="btn btn-primary btn-lg"
-				onclick="notifications()">Subscriptions</button>
-			<button type="button" class="btn btn-success btn-lg"
-				onclick="notification_subscribe()">Subscribe</button>
-			<button type="button" class="btn btn-danger btn-lg"
-				onclick="notification_unsubscribe()">Unsubscribe</button>
-			<button type="button" class="btn btn-secondary btn-lg"
-				onclick="application_interaction()">Interact Other Application</button>
-			</div>
-			<div id="dnsRules" class="float-none">
-				<br/>
-				<h5>Dns Rules</h5>
-				<br/>
-			<button type="button" class="btn btn-secondary btn-lg"
-				onclick="transports()">Transports</button>
-			<button type="button" class="btn btn-primary btn-lg"
-				onclick="dns_rules()">DNS Rules</button>
-			<button type="button" class="btn btn-success btn-lg"
-				onclick="dns_rule_activate()">Activate</button>
-			<button type="button" class="btn btn-danger btn-lg"
-				onclick="dns_rule_deactivate()">Deactivate</button>
-			</div>
 
-		<br/>
-		<br/>
-		<div>
-			<h5>Service Ready <span id='service_ready_led'></span>
-			</h5>
-		</div>
-		<br/>
-		<br/>
-		<h2>Result</h2>
-		<br/>
-		<div id='result'></div>
+
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav">
+						<li id="navservices" class="nav-item active">
+							<a class="nav-link" onclick="activate_menu('services')" href="#">Services</a>
+						</li>
+						<li id="navsubscriptions" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('subscriptions')" href="#">Subscriptions</a>
+						</li>
+						<li id="navinteraction" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('interaction')" href="#">Interactions with Apps</a>
+						</li>
+						<li id="navtransports" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('transports')" href="#">Transports</a>
+						</li>
+						<li id="navdnsRules" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('dnsRules')" href="#">DNS rules</a>
+						</li>
+						<li id="navtimings" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('timings')" href="#">Timings</a>
+						</li>
+						<li id="navtrafficRules" class="nav-item">
+							<a class="nav-link" onclick="activate_menu('trafficRules')" href="#">Traffic Rules</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+				<div id="services" class="float-none d-block">
+					<br/>
+					<h5>Services</h5>
+					<br/>
+					<button type="button" class="btn btn-primary btn-lg"
+					   onclick="services()">Services</button>
+					<button type="button" class="btn btn-success btn-lg"
+					   onclick="service_subscribe()">Register</button>
+					<button type="button" class="btn btn-danger btn-lg"
+					   onclick="service_unsubscribe()">Unregister</button>
+				</div>
+				<div id="subscriptions" class="float-none d-none">
+					<br/>
+					<h5>Service subscriptions</h5>
+					<br/>
+					<button type="button" class="btn btn-primary btn-lg"
+					   onclick="notifications()">Subscriptions</button>
+					<button type="button" class="btn btn-success btn-lg"
+					   onclick="notification_subscribe()">Subscribe</button>
+					<button type="button" class="btn btn-danger btn-lg"
+					   onclick="notification_unsubscribe()">Unsubscribe</button>
+					<button type="button" class="btr btn-secondary btn-lg"
+					   onclick="notify_ready()">Confirm Ready</button>
+				</div>
+				<div id="interaction" class="float-none d-none">
+					<br/>
+					<h5>Interaction with applications</h5>
+					<br/>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="application_interaction()">Interact with the other application</button>
+				</div>
+				<div id="transports" class="float-none d-none">
+					<br/>
+					<h5>Transports</h5>
+					<br/>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="transports()">Transports</button>
+				</div>
+				<div id="dnsRules" class="float-none d-none">
+					<br/>
+					<h5>Dns Rules</h5>
+					<br/>
+					<button type="button" class="btn btn-primary btn-lg"
+					   onclick="dns_rules()">DNS Rules</button>
+					<button type="button" class="btn btn-success btn-lg"
+					   onclick="dns_rule_activate()">Activate</button>
+					<button type="button" class="btn btn-danger btn-lg"
+					   onclick="dns_rule_deactivate()">Deactivate</button>
+				</div>
+				<div id="timings" class="float-none d-none">
+					<br/>
+					<h5>Timings</h5>
+					<br/>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="timings_caps()">Timing Caps</button>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="timings_current_time()">Current Time</button>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="start_ptp()">Start PTP</button>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="ptp_status()">Get PTP status</button>
+					<button type="button" class="btn btn-secondary btn-lg"
+					   onclick="ptp_time()">Get PTP time</button>
+				</div>
+				<div id="trafficRules" class="float-none d-none">
+					<br/>
+					<h5>Traffic Rules</h5>
+					<br/>
+					<button type="button" class="btn btn-primary btn-lg"
+					   onclick="traffic_rules()">Traffic Rules</button>
+					<button type="button" class="btn btn-success btn-lg"
+					   onclick="traffic_rule_activate()">Activate</button>
+					<button type="button" class="btn btn-danger btn-lg"
+					   onclick="traffic_rule_deactivate()">Deactivate</button>
+				</div>
+
+			<br/>
+			<br/>
+			<div>
+				<h5>Service Ready <span id='service_ready_led'></span>
+				</h5>
+			</div>
+			<br/>
+			<br/>
+			<h2>Result</h2>
+			<br/>
+			<div id='result'></div>
 		</div>
 
 		<!-- Optional JavaScript -->

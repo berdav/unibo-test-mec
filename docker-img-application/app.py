@@ -3,8 +3,14 @@
 import os
 import json
 import requests
+import datetime
+import subprocess
 from flask import Flask, Response
 
+def get_nic():
+    for k in os.listdir('/sys/class/net'):
+        if k != 'lo':
+            return k;
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
 # MEC Service endpoint
@@ -13,6 +19,12 @@ MEC_SERVICE_MGMT="mec_service_mgmt/v1"
 MEC_APP_SUPPORT="mec_app_support/v1"
 # Callback proposed
 CALLBACK_URL='/_mecSerMgmtApi/callback'
+
+# Get interfaces
+INTERFACE=get_nic()
+
+# XXX Unsupported in alpine atm.
+PTP_COMMAND="ptp4l -A -4 -S -i {}".format(INTERFACE)
 
 OTHER_APPLICATION_URI='/icommMMTCSlicingService'
 
@@ -230,6 +242,101 @@ def notification_unsubscribe():
     r = requests.delete(query_base)
     return r.text
 
+@app.route('/notifications/notify_ready')
+def notification_confirm_ready():
+    query_base = "{}/{}/applications/{}/confirm_ready".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id
+    )
+
+    ready_indication = { "indication": "READY" }
+    headers = { 'content-type': 'application/json' }
+
+    r = requests.put(query_base, data=json.dumps(ready_indication), headers=headers)
+    return r.text
+
+# Time API
+@app.route('/timings/timing_caps')
+def timing_timing_caps():
+    query_base = "{}/{}/timing/timing_caps".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id,
+            service_id
+    )
+    r = requests.get(query_base)
+    return r.text
+
+@app.route('/timings/current_time')
+def timing_current_time():
+    query_base = "{}/{}/timing/current_time".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id,
+            service_id
+    )
+    r = requests.get(query_base)
+    return r.text
+
+@app.route('/timings/_ptp_status')
+def timing_ptp_status():
+    global ptp_process
+    if ptp_process.poll != None:
+        return "Not Running"
+    return "Running"
+
+@app.route('/timings/_start_ptp')
+def timing_ptp_start():
+    global ptp_process
+    if timing_ptp_status() != "Not Running":
+        return "Already running"
+
+    ptp_process = subprocess.Popen(PTP_COMMAND.split(" "))
+    return "Unimplemented"
+
+@app.route('/timings/_ptp_time')
+def timing_ptp_time():
+    return str(datetime.datetime.now())
+
+# Get Traffic Rules
+@app.route('/traffic_rules')
+def traffic_rules():
+    global mec_base
+    global traffic_rules
+    global app_instance_id
+
+    query_base = "{}/{}/applications/{}/traffic_rules".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id
+    )
+    r = requests.get(query_base)
+
+    traffic_rules = json.loads(r.text)
+
+    return r.text
+
+# Modify DNS rules
+@app.route('/traffic_rules/<modification>')
+def traffic_rule_modify(modification):
+    global mec_base
+    global traffic_rules
+    global app_instance_id
+    traffic_rule = traffic_rules[0]
+
+    query_base = "{}/{}/applications/{}/traffic_rules/{}".format(
+            mec_base,
+            MEC_APP_SUPPORT,
+            app_instance_id,
+            traffic_rule['trafficRuleId']
+    )
+
+    traffic_rule["state"] = modification
+    headers = { 'content-type': 'application/json' }
+    r = requests.put(query_base, data=json.dumps(traffic_rule), headers=headers)
+    return json.dumps(traffic_rule)
+
 # Catch all, return the retrieved file
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
@@ -252,6 +359,7 @@ def catch_all(path):
 def get_application_notice():
     global application_notified
     return str(application_notified);
+
 
 # Callback for the notification framework
 @app.route(CALLBACK_URL)
