@@ -48,6 +48,10 @@ var notification_unsubscribe = function() {
 	_get_query("notifications/unsubscribe")
 }
 
+var application_interaction = function() {
+	_get_query("_contactapplication")
+}
+
 setInterval(function() {
 	$.get("_get_application_notice").done( function(data) {
 		console.log(data)

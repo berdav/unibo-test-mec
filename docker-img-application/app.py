@@ -14,6 +14,8 @@ MEC_APP_SUPPORT="mec_app_support/v1"
 # Callback proposed
 CALLBACK_URL='/_mecSerMgmtApi/callback'
 
+OTHER_APPLICATION_URI='/icommMMTCSlicingService'
+
 app = Flask(__name__)
 
 # MEC Base Endpoint
@@ -24,6 +26,8 @@ app_instance_id = ''
 transportlist = [ { 'id': 'TransId12345' } ]
 
 application_notified = False
+
+other_application_endpoint = ''
 
 # Transport API
 @app.route('/transports')
@@ -258,7 +262,20 @@ def service_notification_callback():
     # XXX We should notify back using a structured json?
     return "ok"
 
+# Query the other application
+@app.route('/_contactapplication')
+def contact_application():
+    global other_application_endpoint
+    query_base = "{}{}".format(
+            other_application_endpoint,
+            OTHER_APPLICATION_URI
+    )
+
+    r = requests.get(query_base)
+    return r.text
+
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']
     mec_base = os.environ['MEC_BASE']
+    other_application_endpoint = os.environ['OTHER_APPLICATION_ENDPOINT']
     app.run("0.0.0.0", port=80)
