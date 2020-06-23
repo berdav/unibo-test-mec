@@ -15,9 +15,6 @@ spec:
         # MEC Platform endpoint
         - name: MEC_BASE
           value: "http://172.17.0.2"
-        # Dual application endpoint
-        - name: OTHER_APPLICATION_ENDPOINT
-          value: "http://127.0.0.1"
         # Application instance identifier
         - name: APP_INSTANCE_ID
           value: "997fc80a-cfc1-498a-b77f-608f09506e86"

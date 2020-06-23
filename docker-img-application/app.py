@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO: This can be transformed into a framework.
+
 import os
 import json
 import requests
@@ -25,8 +27,7 @@ INTERFACE=get_nic()
 
 # XXX Unsupported in alpine atm.
 PTP_COMMAND="ptp4l -A -4 -S -i {}".format(INTERFACE)
-
-OTHER_APPLICATION_URI='/icommMMTCSlicingService'
+other_application_uri=''
 
 app = Flask(__name__)
 
@@ -38,8 +39,6 @@ app_instance_id = ''
 transportlist = [ { 'id': 'TransId12345' } ]
 
 application_notified = False
-
-other_application_endpoint = ''
 
 # Transport API
 @app.route('/transports')
@@ -53,11 +52,14 @@ def transports():
 
     return r.text
 
+TARGET_SERVICE = 'mMTCSlicingService'
+
 # Services API
 @app.route('/services')
 def services():
     global mec_base
     global app_instance_id
+    global other_application_uri
     out = ''
     query_base = "{}/{}/applications/{}/services".format(
             mec_base,
@@ -66,6 +68,16 @@ def services():
     )
 
     r = requests.get(query_base)
+
+    # Get transport endpoint from services
+    try:
+        srvs = json.loads(r.text)
+        for s in srvs:
+            if s['name'] != TARGET_SERVICE:
+                continue
+            other_application_uri = s['transportInfo']['endpoint']['uris'][0]
+    except Exception as e:
+        print(str(e))
 
     return r.text
 
@@ -78,39 +90,37 @@ def service_subscribe():
     global app_instance_id
 
     data = {
-      "serName": "UniboMECService",
-      "serCategory": {
-        "href": "/example/catalogue1",
-        "id": "id12345",
-        "name": "RNI",
-        "version": "v1"
-      },
-      "version": "ServiceVersion1",
-      "state": "ACTIVE",
-      "transportId": "Rest1",
-      "transportInfo": {
-        "id": '{}'.format(transportlist[0]['id']),
-        "name": "REST",
-        "description": "REST API",
-        "type": "REST_HTTP",
-        "protocol": "HTTP",
-        "version": "2.0",
-        "endpoint": {
+        "serName": "UniboMECService",
+        "serCategory": {
+            "href": "/example/catalogue1",
+            "id": "id12345",
+            "name": "RNI",
+            "version": "v1"
         },
-      "security": {
-        "oAuth2Info": {
-          "grantTypes": [
-            ""
-          ],
-          "tokenEndpoint": ""
-        }
-      },
-      "implSpecificInfo": {}
-      },
-      "serializer": "JSON",
-      "scopeOfLocality": "MEC_SYSTEM",
-      "consumedLocalOnly": True,
-      "isLocal": True
+        "version": "ServiceVersion1",
+        "state": "ACTIVE",
+        "transportId": "Rest1",
+        "transportInfo": {
+            "id": '{}'.format(transportlist[0]['id']),
+            "name": "REST",
+            "description": "REST API",
+            "type": "REST_HTTP",
+            "protocol": "HTTP",
+            "version": "2.0",
+            "endpoint": {
+            },
+            "security": {
+                "oAuth2Info": {
+                    "grantTypes": [ ],
+                    "tokenEndpoint": ""
+                }
+            },
+            "implSpecificInfo": {}
+        },
+        "serializer": "JSON",
+        "scopeOfLocality": "MEC_SYSTEM",
+        "consumedLocalOnly": True,
+        "isLocal": True
     }
 
     query_base = "{}/{}/applications/{}/services".format(
@@ -373,10 +383,9 @@ def service_notification_callback():
 # Query the other application
 @app.route('/_contactapplication')
 def contact_application():
-    global other_application_endpoint
-    query_base = "{}{}".format(
-            other_application_endpoint,
-            OTHER_APPLICATION_URI
+    global other_application_uri
+    query_base = "{}".format(
+            other_application_uri
     )
 
     r = requests.get(query_base)
@@ -385,5 +394,4 @@ def contact_application():
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']
     mec_base = os.environ['MEC_BASE']
-    other_application_endpoint = os.environ['OTHER_APPLICATION_ENDPOINT']
     app.run("0.0.0.0", port=80)
