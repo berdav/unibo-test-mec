@@ -28,8 +28,6 @@
 #  - remove hardcoded and environmental variable with a configurable
 #    page
 #
-#  - application endpoint
-#
 # TODO:
 #  - README.md
 
@@ -44,31 +42,78 @@ def get_nic():
     for k in os.listdir('/sys/class/net'):
         if k != 'lo':
             return k;
+
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
 # MEC Service endpoint
 MEC_SERVICE_MGMT="mec_service_mgmt/v1"
 # MEC Application endpoint
 MEC_APP_SUPPORT="mec_app_support/v1"
+
+# Application business endpoint
+EXTERNAL_ENDPOINT='/external_endpoint'
 # Callback proposed
 CALLBACK_URL='/_mecSerMgmtApi/callback'
 
-# Get interfaces
+# Network interface for PTP daemon
 INTERFACE=get_nic()
 
 # XXX Unsupported in alpine atm.
 PTP_COMMAND="ptp4l -A -4 -S -i {}".format(INTERFACE)
+
 other_application_uri=''
 
+# Flask initialization
 app = Flask(__name__)
 
 # MEC Base Endpoint
 mec_base = ''
 
+# Service ID, this will be set by the MEC
 service_id = ''
-app_instance_id = ''
-transportlist = [ { 'id': 'TransId12345' } ]
 
+# Application instance, this can be set by environment variables and
+#  overwritten within the application
+app_instance_id = ''
+
+# The service we are searching in the services list to be notified on.
+target_service = 'mMTCSlicingService'
+
+# Default service data, this can be edited within the application
+service_data = {
+    "serName": "UniboMECService",
+    "serCategory": {
+        "href": "/example/catalogue1",
+        "id": "id12345",
+        "name": "RNI",
+        "version": "v1"
+    },
+    "version": "ServiceVersion1",
+    "state": "ACTIVE",
+    "transportId": "Rest1",
+    "transportInfo": {
+        "id": 'TransId12345' ,
+        "name": "REST",
+        "description": "REST API",
+        "type": "REST_HTTP",
+        "protocol": "HTTP",
+        "version": "2.0",
+        "endpoint": { EXTERNAL_ENDPOINT },
+        "security": {
+            "oAuth2Info": {
+                "grantTypes": [ ],
+                "tokenEndpoint": ""
+            }
+        },
+        "implSpecificInfo": {}
+    },
+    "serializer": "JSON",
+    "scopeOfLocality": "MEC_SYSTEM",
+    "consumedLocalOnly": True,
+    "isLocal": True
+}
+
+# The application has been notified
 application_notified = False
 
 # Transport API
@@ -83,7 +128,6 @@ def transports():
 
     return r.text
 
-TARGET_SERVICE = 'mMTCSlicingService'
 
 # Services API
 @app.route('/services')
@@ -104,7 +148,7 @@ def services():
     try:
         srvs = json.loads(r.text)
         for s in srvs:
-            if s['serName'] != TARGET_SERVICE:
+            if s['serName'] != target_service:
                 continue
             other_application_uri = s['transportInfo']['endpoint']['uris'][0]
     except Exception as e:
@@ -115,44 +159,7 @@ def services():
 # Subscribe to service
 @app.route('/services/subscribe')
 def service_subscribe():
-    global mec_base
-    global service_id
-    global transportlist
-    global app_instance_id
-
-    data = {
-        "serName": "UniboMECService",
-        "serCategory": {
-            "href": "/example/catalogue1",
-            "id": "id12345",
-            "name": "RNI",
-            "version": "v1"
-        },
-        "version": "ServiceVersion1",
-        "state": "ACTIVE",
-        "transportId": "Rest1",
-        "transportInfo": {
-            "id": '{}'.format(transportlist[0]['id']),
-            "name": "REST",
-            "description": "REST API",
-            "type": "REST_HTTP",
-            "protocol": "HTTP",
-            "version": "2.0",
-            "endpoint": {
-            },
-            "security": {
-                "oAuth2Info": {
-                    "grantTypes": [ ],
-                    "tokenEndpoint": ""
-                }
-            },
-            "implSpecificInfo": {}
-        },
-        "serializer": "JSON",
-        "scopeOfLocality": "MEC_SYSTEM",
-        "consumedLocalOnly": True,
-        "isLocal": True
-    }
+    data = service_data
 
     query_base = "{}/{}/applications/{}/services".format(
             mec_base,
@@ -171,9 +178,6 @@ def service_subscribe():
 # Unsubscribe a service
 @app.route('/services/unsubscribe')
 def service_unsubscribe():
-    global mec_base
-    global service_id
-    global app_instance_id
     query_base = "{}/{}/applications/{}/services/{}".format(
             mec_base,
             MEC_SERVICE_MGMT,
@@ -186,9 +190,7 @@ def service_unsubscribe():
 # Get DNS Rules
 @app.route('/dns_rules')
 def dns_rules():
-    global mec_base
     global dns_rules
-    global app_instance_id
 
     query_base = "{}/{}/applications/{}/dns_rules".format(
             mec_base,
@@ -204,9 +206,7 @@ def dns_rules():
 # Modify DNS rules
 @app.route('/dns_rules/<modification>')
 def dns_rule_modify(modification):
-    global mec_base
     global dns_rules
-    global app_instance_id
     dns_rule = dns_rules[0]
 
     query_base = "{}/{}/applications/{}/dns_rules/{}".format(
@@ -224,8 +224,6 @@ def dns_rule_modify(modification):
 # Notifications API
 @app.route('/notifications')
 def notifications():
-    global mec_base
-    global app_instance_id
     query_base = "{}/{}/applications/{}/subscriptions".format(
             mec_base,
             MEC_SERVICE_MGMT,
@@ -239,9 +237,7 @@ def notifications():
 # Subscribe to notifications
 @app.route('/notifications/subscribe')
 def notifications_subscribe():
-    global mec_base
     global service_id
-    global app_instance_id
 
     # Catch all notification endpoint
     data = {
@@ -271,9 +267,6 @@ def notifications_subscribe():
 # Unsubscribe notifications
 @app.route('/notifications/unsubscribe')
 def notification_unsubscribe():
-    global mec_base
-    global service_id
-    global app_instance_id
     query_base = "{}/{}/applications/{}/subscriptions/{}".format(
             mec_base,
             MEC_SERVICE_MGMT,
@@ -343,9 +336,7 @@ def timing_ptp_time():
 # Get Traffic Rules
 @app.route('/traffic_rules')
 def traffic_rules():
-    global mec_base
     global traffic_rules
-    global app_instance_id
 
     query_base = "{}/{}/applications/{}/traffic_rules".format(
             mec_base,
@@ -361,9 +352,7 @@ def traffic_rules():
 # Modify DNS rules
 @app.route('/traffic_rules/<modification>')
 def traffic_rule_modify(modification):
-    global mec_base
     global traffic_rules
-    global app_instance_id
     traffic_rule = traffic_rules[0]
 
     query_base = "{}/{}/applications/{}/traffic_rules/{}".format(
@@ -398,7 +387,6 @@ def catch_all(path):
 
 @app.route("/_get_application_notice")
 def get_application_notice():
-    global application_notified
     return str(application_notified);
 
 
@@ -414,13 +402,31 @@ def service_notification_callback():
 # Query the other application
 @app.route('/_contactapplication')
 def contact_application():
-    global other_application_uri
     query_base = "{}".format(
             other_application_uri
     )
 
     r = requests.get(query_base)
     return r.text
+
+# Application endpoint, contacting this will return information
+#  on the running application
+@app.route(EXTERNAL_ENDPOINT)
+def external_endpoint():
+    result = { }
+    result['app_instance_id'] = app_instance_id
+    result['mec_base'] = mec_base
+    result['application_notified'] = application_notified
+    result['other_application_uri'] = other_application_uri
+    result['traffic_rules'] = traffic_rules
+    result['service_id'] = service_id
+    result['callback_url'] = CALLBACK_URL
+    result['dns_rules'] = dns_rules
+
+    # And a dynamic value
+    result['current_time'] = str(time.time())
+
+    return json.dumps(result)
 
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']
