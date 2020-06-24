@@ -263,7 +263,7 @@ def notification_confirm_ready():
     ready_indication = { "indication": "READY" }
     headers = { 'content-type': 'application/json' }
 
-    r = requests.put(query_base, data=json.dumps(ready_indication), headers=headers)
+    r = requests.post(query_base, data=json.dumps(ready_indication), headers=headers)
     return r.text
 
 # Time API
@@ -378,7 +378,7 @@ def service_notification_callback():
     application_notified = True
 
     # XXX We should notify back using a structured json?
-    return "ok"
+    return ""
 
 # Query the other application
 @app.route('/_contactapplication')

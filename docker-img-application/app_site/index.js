@@ -74,7 +74,7 @@ var ptp_time = function() {
 }
 
 var traffic_rules = function() {
-	_get_query("dns_rules");
+	_get_query("traffic_rules");
 }
 
 var traffic_rule_activate = function() {
