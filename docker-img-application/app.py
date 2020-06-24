@@ -73,7 +73,7 @@ def services():
     try:
         srvs = json.loads(r.text)
         for s in srvs:
-            if s['name'] != TARGET_SERVICE:
+            if s['serName'] != TARGET_SERVICE:
                 continue
             other_application_uri = s['transportInfo']['endpoint']['uris'][0]
     except Exception as e:
