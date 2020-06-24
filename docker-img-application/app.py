@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 
-# TODO: This can be transformed into a framework.
+# TODO:
+#  - This can be transformed into a framework.
+#
+# TODO:
+#  - remove hardcoded and environmental variable with a configurable
+#    page
+#
+#  - application endpoint
+#
+# TODO:
+#  - README.md
 
 import os
 import json
