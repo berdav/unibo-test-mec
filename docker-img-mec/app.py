@@ -2,6 +2,7 @@
 
 import os
 import uuid
+import time
 import json
 import requests
 from flask import Flask, Response, request
@@ -48,6 +49,64 @@ def init_appids(app_instance_id):
                 "state": "ACTIVE"
             }
         }
+
+    traffic_rules = {
+            'TrafficRule1' : {
+                "trafficRuleId": "TrafficRule1",
+                "filterType": "FLOW",
+                "priority": 1,
+                "trafficFilter": [
+                    {
+                        "srcAddress": [
+                            "192.168.1.1"
+                            ],
+                        "dstAddress": [
+                            "192.168.1.1"
+                            ],
+                        "srcPort": [
+                            "8080"
+                            ],
+                        "dstPort": [
+                            "8080"
+                            ],
+                        "protocol": [
+                            "?"
+                            ],
+                        "token": [
+                            "?"
+                            ],
+                        "srcTunnelAddress": [
+                            "?"
+                            ],
+                        "tgtTunnelAddress": [
+                            "?"
+                            ],
+                        "srcTunnelPort": [
+                            "?"
+                            ],
+                        "dstTunnelPort": [
+                            "?"
+                            ],
+                        "qCI": 1,
+                        "dSCP": 0,
+                        "tC": 1
+                        }
+                    ],
+                "action": "DROP",
+                "dstInterface": {
+                    "interfaceType": "TUNNEL",
+                    "tunnelInfo": {
+                        "tunnelType": "GTP_U",
+                        "tunnelDstAddress": "?",
+                        "tunnelSrcAddress": "?"
+                        },
+                    "srcMacAddress": "02-00-00-00-00-00",
+                    "dstMacAddress": "02-00-00-00-00-00",
+                    "dstIpAddress": "192.0.2.0"
+                    },
+                "state": "ACTIVE"
+            }
+    }
 
     servicelist = [
             {
@@ -105,6 +164,7 @@ def init_appids(app_instance_id):
     appids[app_instance_id] = {}
     appids[app_instance_id]['transports'] = transports
     appids[app_instance_id]['dns_rules'] = dns_rules
+    appids[app_instance_id]['traffic_rules'] = traffic_rules
     appids[app_instance_id]['servicelist'] = servicelist
     appids[app_instance_id]['subscriptionlist'] = subscriptionlist
     appids[app_instance_id]['servicedict'] = {}
@@ -166,6 +226,64 @@ def dns_rules(appId,dnsruleId = None):
         appids[appId]['dns_rules'][dnsruleId] = json.loads(request.data)
         return "ok"
 
+# Traffic Rules list
+# Traffic Rules change
+@app.route('/mec_app_support/v1/applications/<appId>/traffic_rules')
+@app.route('/mec_app_support/v1/applications/<appId>/traffic_rules/<trafficRuleId>',
+        defaults={'trafficRuleId':None},
+        methods = [ 'GET', 'PUT' ])
+def traffic_rules(appId,trafficRuleId = None):
+    global appids
+
+    if request.method == 'GET':
+        traffic_rules_list = list(appids[appId]['traffic_rules'].values())
+        return Response(json.dumps(traffic_rules_list), mimetype='application/json');
+
+    elif request.method == 'PUT':
+        appids[appId]['traffic_rules'][trafficRuleId] = json.loads(request.data)
+        return "ok"
+
+# Timing capabilities
+@app.route('/mec_app_support/v1/timing/timing_caps')
+def timing_caps():
+    caps = {
+            "timeStamp": {
+                "seconds": time.time(),
+                "nanoSeconds": time.time_ns()
+                },
+            "ntpServers": [
+                {
+                    "ntpServerAddrType": "IP_ADDRESS",
+                    "ntpServerAddr": "192.0.2.0",
+                    "minPollingInterval": 3,
+                    "maxPollingInterval": 17,
+                    "localPriority": 1,
+                    "authenticationOption": "NONE",
+                    "authenticationKeyNum": 1
+                    }
+                ],
+            "ptpMasters": [
+                {
+                    "ptpMasterIpAddress": "192.0.2.0",
+                    "ptpMasterLocalPriority": 1,
+                    "delayReqMaxRate": 10
+                    }
+                ]
+            }
+    return json.dumps(caps)
+
+# Current TOD
+@app.route('/mec_app_support/v1/timing/current_time')
+def current_time():
+    # This is obviously horribly wrong, but it is for debug purposes :)
+    mytime = {
+            "seconds" : time.time(),
+            "nanoSeconds" : time.time_ns(),
+            "timeSourceStatus" : "TRACEABLE"
+    }
+
+    return json.dumps(mytime)
+
 # Notifications List
 # Notifications Subscribe
 # Notifications Unsubscribe
@@ -202,6 +320,13 @@ def application_subscriptions(appId, subscriptionId = None):
         if subscriptionId != None:
             del appids[appId]['subscriptiondict'][subscriptionId]
         return "ok"
+
+@app.route('/mec_app_support/v1/applications/<appId>/confirm_ready', methods=[ "POST" ])
+def confirm_ready(appId):
+    if notification_callback != '':
+        requests.get(notification_callback)
+    return ""
+
 
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']
