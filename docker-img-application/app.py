@@ -1,5 +1,26 @@
 #!/usr/bin/env python3
 
+# unibo-test-application - Testbed for MEC API 011 applications
+# This application is part of unibo-test-mec
+# Copyright (C) 2020  Davide Berardi <berardi.dav@gmail.com>
+#                     Davide Borsatti <davide.borsatti@studio.unibo.it>
+#                     Franco Callegati <franco.callegati@unibo.it>
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+# USA
+
 # TODO:
 #  - This can be transformed into a framework.
 #
