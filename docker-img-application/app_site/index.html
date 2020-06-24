@@ -50,12 +50,23 @@
 				/*float: left;*/
 			}
 			li {
-			 color:white;
+				color:white;
+			}
+			label {
+				color: white;
+			}
+			input {
+				width: 80%;
+			}
+			.form-group {
+				margin-left: 10%;
+				margin-right: 10%;
+				text-align: left;
 			}
 		</style>
 	</head>
 	<body>
-		<div id="main" class='text-center'>
+		<div id="main" class="text-center">
 			<h1>UniBO Test MEC Application</h1>
 
 
@@ -84,7 +95,7 @@
 							<a class="nav-link" onclick="activate_menu('trafficRules')" href="#">Traffic Rules</a>
 						</li>
 						<li id="navconfiguration" class="nav-item">
-							<a class="nav-link" onclick="activate_menu('configuration') ; load_configurations()" href="#">Configuration</a>
+							<a class="nav-link" onclick="activate_menu('configuration') ; get_configuration()" href="#">Configuration</a>
 						</li>
 					</ul>
 				</div>
@@ -169,44 +180,45 @@
 					<h5>Configuration</h5>
 					<br/>
 					<form>
+			<form href="#">
 			    	<div class="form-group">
-			    		<label for="mecbase">MEC base address</label>
-			    		<input type="text" class="form-control" id="mecbase" placeholder="http://mec_base_address:80">
-			    		<small id="mecbasehelp" class="form-text text-muted">Should be the complete endpoint without the /mec_ part</small>
+			    		<label for="mec_base">MEC base address</label>
+			    		<input type="text" class="form-control" id="mec_base" placeholder="http://mec_base_address:80">
+			    		<small id="mec_basehelp" class="form-text text-muted">Should be the complete endpoint without the /mec_ part</small>
 			    	</div>
 
 			    	<div class="form-group">
-			    		<label for="targetservice">Target Service Name</label>
-			    		<input type="text" class="form-control" id="targetservice"
+			    		<label for="target_service">Target Service Name</label>
+			    		<input type="text" class="form-control" id="target_service"
 							placeholder="mMTCSlicingService">
-			    		<small id="targetservicehelp" class="form-text text-muted">
+			    		<small id="target_servicehelp" class="form-text text-muted">
 											If empty or wrong the application will use the
 											Other Application URI value.
 							</small>
 			    	</div>
 
 			    	<div class="form-group">
-			    		<label for="otherapplicationuri">Other application URI</label>
-			    		<input type="text" class="form-control" id="otherapplicationuri" placeholder="http://other_application:80/api/v1/testendpoint">
-			    		<small id="otherapplicationurihelp" class="form-text text-muted">You
+			    		<label for="other_application_uri">Other application URI</label>
+			    		<input type="text" class="form-control" id="other_application_uri" placeholder="http://other_application:80/api/v1/testendpoint">
+			    		<small id="other_application_urihelp" class="form-text text-muted">You
 											can leave the field blank to automatically get the
 							endpoint when you get the service list if the service match the Service Name</small>
 			    	</div>
 
 			    	<div class="form-group">
-			    		<label for="appid">Application Instance ID</label>
-			    		<input type="text" class="form-control" id="appid" placeholder="cf1f8f9a-a925-4297-8ea4-1110149c2cba">
-			    		<small id="appidhelp" class="form-text text-muted">
+			    		<label for="app_instance_id">Application Instance ID</label>
+			    		<input type="text" class="form-control" id="app_instance_id" placeholder="cf1f8f9a-a925-4297-8ea4-1110149c2cba">
+			    		<small id="app_instance_idhelp" class="form-text text-muted">
 											This should match the one present in the
 											MEC platform.
 							</small>
 			    	</div>
 
 			    	<div class="form-group">
-			    		<label for="servicedata">Announced Service Data</label>
-							<textarea class="form-control" id="servicedata"
+			    		<label for="service_data">Announced Service Data</label>
+							<textarea class="form-control" id="service_data"
 						   placeholder='{ "serName": "UniboMECService" }'></textarea>
-			    		<small id="servicedatahelp" class="form-text text-muted">
+			    		<small id="service_datahelp" class="form-text text-muted">
 											The service data that will get announced to the
 											MEC platform.
 							</small>

@@ -36,12 +36,17 @@ import json
 import requests
 import datetime
 import subprocess
-from flask import Flask, Response
+from flask import Flask, Response, request
 
 def get_nic():
     for k in os.listdir('/sys/class/net'):
         if k != 'lo':
             return k;
+
+def set_to_list(s):
+    if isinstance(s, set):
+        return list(s)
+    return None
 
 # Base dir of the html, css and js files
 BASEDIR='/var/www'
@@ -431,9 +436,38 @@ def external_endpoint():
 
 # Get and change the configurations
 @app.route("/_configuration", methods=[ "GET", "POST" ])
-    return ""
+def configuration():
+    global mec_base
+    global target_service
+    global other_application_uri
+    global app_instance_id
+    global service_data
+
+    if request.method == 'GET':
+        result = { }
+        result['mec_base'] = mec_base
+        result['target_service'] = target_service
+        result['other_application_uri'] = other_application_uri
+        result['app_instance_id'] = app_instance_id
+        result['service_data'] = service_data
+
+        return json.dumps(result, default=set_to_list)
+    elif request.method == 'POST':
+        r = request.json
+        mec_base = r['mec_base']
+        target_service = r['target_service']
+        other_application_uri = r['other_application_uri']
+        app_instance_id = r['app_instance_id']
+        service_data = r['service_data']
+        return "ok"
+
 
 if __name__=='__main__':
-    app_instance_id = os.environ['APP_INSTANCE_ID']
-    mec_base = os.environ['MEC_BASE']
+    try:
+        app_instance_id = os.environ['APP_INSTANCE_ID']
+        mec_base = os.environ['MEC_BASE']
+    except:
+        # No configuration for now, will except when a request to an
+        # invalid endpoint will be made.
+        pass
     app.run("0.0.0.0", port=80)

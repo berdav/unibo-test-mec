@@ -89,9 +89,49 @@ var application_interaction = function() {
 	_get_query("_contactapplication")
 }
 
+var get_configuration = function() {
+	$.get("_configuration").done( function (data_s) {
+		data = JSON.parse(data_s)
+		console.log("%o", data)
+		Object.keys(data).forEach((key) => {
+			if (typeof(data[key]) === 'string') {
+				$( `#${key}` ).val(
+					data[key]
+				)
+			} else {
+				$( `#${key}` ).val(
+					JSON.stringify(data[key], null, 4)
+				)
+			}
+		})
+	})
+}
+
+var put_configuration = function() {
+	data = {};
+	[ "mec_base", "target_service", "other_application_uri", "app_instance_id" ].forEach((k) => {
+		data[k] = $( `#${k}` ).val()
+	})
+
+	text_area_keys = ["service_data"];
+	// Text areas input
+	text_area_keys.forEach((key) => {
+		data[key] = JSON.parse($( `#${key}` ).val())
+	})
+
+	// success feedback?
+	$.ajax({
+		url:'_configuration',
+		type:'POST',
+		data: JSON.stringify(data),
+		contentType:"application/json; charset=utf-8",
+		dataType:"json",
+	})
+}
+
+
 setInterval(function() {
 	$.get("_get_application_notice").done( function(data) {
-		console.log(data)
 		if (data === 'True') {
 			$( "#service_ready_led" ).css(
 				"background-color",
