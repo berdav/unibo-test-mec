@@ -61,23 +61,24 @@ INTERFACE=get_nic()
 # XXX Unsupported in alpine atm.
 PTP_COMMAND="ptp4l -A -4 -S -i {}".format(INTERFACE)
 
+# The endpoint we will contact to get data from the application.
 other_application_uri=''
-
-# Flask initialization
-app = Flask(__name__)
-
-# MEC Base Endpoint
-mec_base = ''
 
 # Service ID, this will be set by the MEC
 service_id = ''
+
+# Flask initialization.
+app = Flask(__name__)
+
+# MEC Base Endpoint.
+mec_base = ''
 
 # Application instance, this can be set by environment variables and
 #  overwritten within the application
 app_instance_id = ''
 
 # The service we are searching in the services list to be notified on.
-target_service = 'mMTCSlicingService'
+target_service = ''
 
 # Default service data, this can be edited within the application
 service_data = {
@@ -427,6 +428,10 @@ def external_endpoint():
     result['current_time'] = str(time.time())
 
     return json.dumps(result)
+
+# Get and change the configurations
+@app.route("/_configuration", methods=[ "GET", "POST" ])
+    return ""
 
 if __name__=='__main__':
     app_instance_id = os.environ['APP_INSTANCE_ID']

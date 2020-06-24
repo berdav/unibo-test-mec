@@ -83,6 +83,10 @@
 						<li id="navtrafficRules" class="nav-item">
 							<a class="nav-link" onclick="activate_menu('trafficRules')" href="#">Traffic Rules</a>
 						</li>
+						<li id="navconfiguration" class="nav-item">
+							<a
+								class="nav-link" onclick="activate_menu('configuration') ; load_configurations()" href="#">Traffic Rules</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -160,6 +164,57 @@
 					   onclick="traffic_rule_activate()">Activate</button>
 					<button type="button" class="btn btn-danger btn-lg"
 					   onclick="traffic_rule_deactivate()">Deactivate</button>
+				</div>
+				<div id="configuration" class="float-none d-none">
+					<br/>
+					<h5>Configuration</h5>
+					<br/>
+					<form>
+			    	<div class="form-group">
+			    		<label for="mecbase">MEC base address</label>
+			    		<input type="text" class="form-control" id="mecbase" placeholder="http://mec_base_address:80">
+			    		<small id="mecbasehelp" class="form-text text-muted">Should be the complete endpoint without the /mec_ part</small>
+			    	</div>
+
+			    	<div class="form-group">
+			    		<label for="targetservice">Target Service Name</label>
+			    		<input type="text" class="form-control" id="targetservice"
+							placeholder="mMTCSlicingService">
+			    		<small id="targetservicehelp" class="form-text text-muted">
+											If empty or wrong the application will use the
+											Other Application URI value.
+							</small>
+			    	</div>
+
+			    	<div class="form-group">
+			    		<label for="otherapplicationuri">Other application URI</label>
+			    		<input type="text" class="form-control" id="otherapplicationuri" placeholder="http://other_application:80/api/v1/testendpoint">
+			    		<small id="otherapplicationurihelp" class="form-text text-muted">You
+											can leave the field blank to automatically get the
+							endpoint when you get the service list if the service match the Service Name</small>
+			    	</div>
+
+			    	<div class="form-group">
+			    		<label for="appid">Application Instance ID</label>
+			    		<input type="text" class="form-control" id="appid" placeholder="cf1f8f9a-a925-4297-8ea4-1110149c2cba">
+			    		<small id="appidhelp" class="form-text text-muted">
+											This should match the one present in the
+											MEC platform.
+							</small>
+			    	</div>
+
+			    	<div class="form-group">
+			    		<label for="servicedata">Announced Service Data</label>
+							<textarea class="form-control" id="servicedata"
+						   placeholder='{ "serName": "UniboMECService" }'></textarea>
+			    		<small id="servicedatahelp" class="form-text text-muted">
+											The service data that will get announced to the
+											MEC platform.
+							</small>
+			    	</div>
+
+			    	<button type="submit" class="btn btn-primary" onclick="put_configuration()">Submit</button>
+			    </form>
 				</div>
 
 			<br/>
