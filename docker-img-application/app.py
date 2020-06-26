@@ -2,10 +2,11 @@
 
 # unibo-test-application - Testbed for MEC API 011 applications
 # This application is part of unibo-test-mec
-# Copyright (C) 2020  Davide Berardi <berardi.dav@gmail.com>
-#                     Davide Borsatti <davide.borsatti@studio.unibo.it>
+# Copyright (C) 2020  Davide Berardi   <berardi.dav@gmail.com>
+#                     Davide Borsatti  <davide.borsatti@studio.unibo.it>
 #                     Franco Callegati <franco.callegati@unibo.it>
-# 
+#                     Walter Cerroni   <walter.cerroni@unibo.it>
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
