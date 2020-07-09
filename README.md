@@ -78,8 +78,8 @@ with your application you can click on the button "..."
 <!-- Screen utilizzo -->
 
 ## Implemented MEC 011 APIs
-|API|   |URL|
-|---|---|---|
-|   |   |   |
-|   |   |   |
-|   |   |   |
+|API|Implemented|URL|
+|---|-----------|---|
+|   |           |   |
+|   |           |   |
+|   |           |   |
