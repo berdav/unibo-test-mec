@@ -80,6 +80,5 @@ with your application you can click on the button "..."
 ## Implemented MEC 011 APIs
 |API|Implemented|URL|
 |---|-----------|---|
-|   |           |   |
-|   |           |   |
-|   |           |   |
+|GET  /applications/{appInstanceId}/subscriptions|✅|   |
+|POST /applications/{appInstanceId}/subscriptions|✅|   |
