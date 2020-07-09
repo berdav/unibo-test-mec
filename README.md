@@ -1,6 +1,6 @@
 # Unibo Test MEC
 
-![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/readme-modifications/readme-img/logo.png?raw=true)
+![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/readme-modifications/readme-images/logo.png?raw=true)
 
 Unibo Test MEC is a testing application for the MEC Infrastructure.
 
