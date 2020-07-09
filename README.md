@@ -86,8 +86,8 @@ parameters.
 |API Method and URL                                                   | Implemented | Notes                                              | Description URL |
 |---------------------------------------------------------------------|-------------|----------------------------------------------------|-----------------|
 |`GET    /applications/{appInstanceId}/subscriptions`                 |✔️            |                                                    |[Forge ETSI](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/mec/gs011-app-enablement-api/raw/master/MecServiceMgmtApi.yaml#/appSubscriptions/ApplicationsSubscriptions_GET) |
-|`POST   /applications/{appInstanceId}/subscriptions`                 |✔️            |                                                    | |
-|`GET    /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`POST   /applications/{appInstanceId}/subscriptions`                 |✔️            |                                                    |[Forge ETSI](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/mec/gs011-app-enablement-api/raw/master/MecServiceMgmtApi.yaml#/appSubscriptions/ApplicationsSubscriptions_POST) |
+|`GET    /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    |[Forge ETSI](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/mec/gs011-app-enablement-api/raw/master/MecServiceMgmtApi.yaml#/appSubscriptions/ApplicationsSubscription_GET) |
 |`DELETE /applications/{appInstanceId}/subscriptions/{subscriptionId}`|✔️            |                                                    | |
 |`GET    /applications/{appInstanceId}/services`                      |✔️            |                                                    | |
 |`POST   /applications/{appInstanceId}/services`                      |✔️            |                                                    | |
