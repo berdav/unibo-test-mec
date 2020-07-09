@@ -77,8 +77,39 @@ For instance, if you want to retrieve the DNS configuration associated
 with your application you can click on the button "..."
 <!-- Screen utilizzo -->
 
+### MEC simulation
+To simulate a dummy MEC platform, you can use the `docker-img-mec` image
+which can be built and run using the `run-mec.sh` script with no
+parameters.
+
 ## Implemented MEC 011 APIs
-|API|Implemented|URL|
-|---|-----------|---|
-|`GET`  /applications/{appInstanceId}/subscriptions|✔️ |   |
-|`POST` /applications/{appInstanceId}/subscriptions|✔️ |   |
+|API Method and URL                                                   | Implemented | Notes                                              | Description URL |
+|---------------------------------------------------------------------|-------------|----------------------------------------------------|-----------------|
+|`GET    /applications/{appInstanceId}/subscriptions`                 |✔️            |                                                    |[Forge ETSI](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/mec/gs011-app-enablement-api/raw/master/MecServiceMgmtApi.yaml#/appSubscriptions/ApplicationsSubscriptions_GET) |
+|`POST   /applications/{appInstanceId}/subscriptions`                 |             |                                                    | |
+|`GET    /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`GET    /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`DELETE /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`DELETE /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`GET    /applications/{appInstanceId}/services`                      |             |                                                    | |
+|`POST   /applications/{appInstanceId}/services`                      |             |                                                    | |
+|`GET    /applications/{appInstanceId}/services/{serviceId}`          |             |                                                    | |
+|`PUT    /applications/{appInstanceId}/services/{serviceId}`          |             |                                                    | |
+|`DELETE /applications/{appInstanceId}/services/{serviceId}`          |             |                                                    | |
+|`GET    /services`                                                   |             |                                                    | |
+|`GET    /services/{serviceId}`                                       |             |                                                    | |
+|`GET    /transports`                                                 |             |                                                    | |
+|`GET    /applications/{appInstanceId}/traffic_rules`                 |             |                                                    | |
+|`GET    /applications/{appInstanceId}/traffic_rules/{trafficRuleId}` |             |                                                    | |
+|`PUT    /applications/{appInstanceId}/traffic_rules/{trafficRuleId}` |             |                                                    | |
+|`GET    /applications/{appInstanceId}/dns_rules`                     |             |                                                    | |
+|`GET    /applications/{appInstanceId}/dns_rules/{dnsRuleId}`         |             |                                                    | |
+|`PUT    /applications/{appInstanceId}/dns_rules/{dnsRuleId}`         |             |                                                    | |
+|`GET    /applications/{appInstanceId}/subscriptions`                 |             |                                                    | |
+|`POST   /applications/{appInstanceId}/subscriptions`                 |             |                                                    | |
+|`GET    /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`DELETE /applications/{appInstanceId}/subscriptions/{subscriptionId}`|             |                                                    | |
+|`POST   /applications/{appInstanceId}/confirm_termination`           |             |                                                    | |
+|`POST   /applications/{appInstanceId}/confirm_ready`                 |             |                                                    | |
+|`GET    /timing/timing_caps`                                         |             |                                                    | |
+|`GET    /timing/current_time`                                        |             | Only application timestamp, no NTP nor PTP support | |
