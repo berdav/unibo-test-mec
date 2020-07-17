@@ -64,18 +64,19 @@ After this step, navigate with a web browser to your docker container
 endpoint (usually it would be at the IP 172.17.0.2, but it can vary
 depending on your configuration).
 
-<!-- Screen generico -->
+![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/master/readme-images/normal.png?raw=true)
 
 After reaching the webserver, go to the configuration tab.
-<!-- Screen configurazione -->
+![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/master/readme-images/configuration.png?raw=true)
 
 Configure all the fields according to your needs.  After that you can
 start to check the functions of your MEC application or server using the
 various tabs and buttons.
 
 For instance, if you want to retrieve the DNS configuration associated
-with your application you can click on the button "..."
-<!-- Screen utilizzo -->
+with your application you can click on the button "DNS Rules" in the
+"DNS rules" tab.
+![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/master/readme-images/dns.png?raw=true)
 
 ### MEC simulation
 To simulate a dummy MEC platform, you can use the `docker-img-mec` image
