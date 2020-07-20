@@ -1,26 +1,22 @@
-# Unibo Test MEC
+# Unibo MEC API Tester
 
 ![Unibo-test-MEC logo](https://github.com/berdav/unibo-test-mec/blob/master/readme-images/logo.png?raw=true)
 
-Unibo Test MEC is a testing application for the MEC Infrastructure.
-
-While testing the infrastructure capabilities, it can be used to create
-a complete use-case for the interaction with the MEC.
-
-The main application goals are the easiness of use and the support of
-the MEC 011 API.
+The Unibo MEC API Tester is a web-based application used to test the API capabilities of a MEC Platform.
+It could be a useful tool to quickly and easily test the compliance of the APIs provided by a MEC Platform with the ones ETSI standardized in the MEC ISG. Or simply to setup a basic MEC application to debug a MEC ready infrastructure.
+Right now only supports MEC 011 API calls.
 
 ## Application design
 This application is composed of a web server that communicates with the
-MEC platform, exposing an easy to use interface.
+MEC platform, exposing an easy to use web interface.
 
 The webserver does not need any configuration besides from the
-infrastructure ones such as `application-id` and the `MEC endpoint` (the
-MEC platform IP address and port in form of an HTTP URL) which is
+infrastructure ones such as `application-id` (an identifier the MEC platform assigns to the application once deployed) and the `MEC endpoint` (the
+MEC platform IP address and port in form of an HTTP URL) which are
 required to perform the API calls.
 
 ## Installation
-To execute the application you need to compile the docker images, put
+The application is built inside a Docker container image. Therefore to execute it you need to compile the docker images, put
 them on a reachable image repository (or use the local one)
 
 ```bash
@@ -38,7 +34,7 @@ docker-application directory
 ```
 
 ### Kubernetes Build
-The application has a `kubernetes` descriptor `unibo-test-mec.yml`.
+The application has also a `kubernetes` descriptor `unibo-test-mec.yml`.
 You can import this file and modify it accordingly to put it on your
 Kubernetes cluster.
 
@@ -51,10 +47,10 @@ installation would be sufficient).  The script runs without parameters:
 ```
 
 ## Usage
-The application is designed to be used with small-to-any configuration.
-Besides from that, a little configuration is required to make it
+The application is designed to be deplyed with small-to-any configuration.
+Besides that, a little configuration is required to make it
 interacts with the MEC platform.  To do so, start the application using
-the preferred method above.  For instance to start it with docker you
+the preferred method described above.  For instance, to start it with docker you
 can simply run:
 ```bash
 # ./run-local.sh
